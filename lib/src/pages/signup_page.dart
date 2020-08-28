@@ -1,4 +1,7 @@
+import 'package:dit_signup/src/validations/validation_item.dart';
+import 'package:dit_signup/src/validations/validatios_signup.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SignUpPage extends StatelessWidget {
   final header = 'Unete a la comunidad Doggies In Town';
@@ -19,6 +22,7 @@ class SignUpPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final valService = Provider.of<SignUpValidation>(context);
 
     return Scaffold(
         backgroundColor: Colors.white,
@@ -32,14 +36,20 @@ class SignUpPage extends StatelessWidget {
             color: Colors.green[300],
           ),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              headers(),
-              form(),
-              buttons(),
-            ],
-          ),
+        body: CustomScrollView(
+          slivers: [
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Column(
+                children: [
+                  headers(),
+                  form(valService),
+                  Expanded(child: Container()),
+                  buttons(valService),
+                ],
+              ),
+            ),
+          ],
         ));
   }
 
@@ -66,7 +76,7 @@ class SignUpPage extends StatelessWidget {
     );
   }
 
-  Widget form() {
+  Widget form(SignUpValidation valService) {
     return Container(
       padding: EdgeInsets.only(
         right: 20,
@@ -75,52 +85,63 @@ class SignUpPage extends StatelessWidget {
       child: Column(children: [
         TextField(
           decoration: InputDecoration(
-            fillColor: Colors.green[300],
-            labelText: 'Nombre*',
-            hintText: 'Escribe tu nombre',
-          ),
+              fillColor: Colors.green[300],
+              labelText: 'Nombre*',
+              hintText: 'Escribe tu nombre',
+              errorText: valService.getName.error),
+          onChanged: (valor) => valService.changeName(valor),
         ),
         TextField(
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
-            fillColor: Colors.green[300],
-            labelText: 'Email*',
-            hintText: 'Escribe tu correo',
-          ),
+              fillColor: Colors.green[300],
+              labelText: 'Email*',
+              hintText: 'Escribe tu correo',
+              errorText: valService.getEmail.error),
+          onChanged: (valor) => valService.changeEmail(valor),
         ),
         TextField(
           obscureText: true,
           decoration: InputDecoration(
-            fillColor: Colors.green[300],
-            labelText: 'Contraseña*',
-            hintText: 'Escribe tu contraseña',
-          ),
+              fillColor: Colors.green[300],
+              labelText: 'Contraseña*',
+              hintText: 'Escribe tu contraseña',
+              errorText: valService.getPss.error),
+          onChanged: (valor) {
+            valService.changePss(valor);
+          },
         ),
         TextField(
           obscureText: true,
           decoration: InputDecoration(
-            fillColor: Colors.green[300],
-            labelText: 'Confirmar Contraseña*',
-            hintText: 'Escribe nuevamente tu contraseña*',
-          ),
+              fillColor: Colors.green[300],
+              labelText: "Confirmar Contraseña",
+              hintText: 'Escribe nuevamente tu contraseña*',
+              errorText: valService.getconf.error),
+          onChanged: (valor) {
+            valService.changeConf(valor);
+          },
         ),
       ]),
     );
   }
 
-  buttons() {
+  buttons(SignUpValidation valService) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 60,),
+      padding: EdgeInsets.symmetric(
+        vertical: 60,
+      ),
       child: Column(
         children: [
           RaisedButton(
-            onPressed: () {},
+            onPressed: valService.isValid ? valService.submitData : null,
             elevation: 0,
             color: Colors.green[300],
             textColor: Colors.white,
             child: Container(
                 padding: EdgeInsets.symmetric(horizontal: 80, vertical: 20),
-                child: Text('Crear Cuenta')),
+                child: Text('Crear Cuenta',
+                    style: TextStyle(fontFamily: 'SF Regular', fontSize: 20))),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           ),
