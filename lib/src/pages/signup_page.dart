@@ -1,6 +1,6 @@
 import 'package:dit_signup/src/models/user_model.dart';
 import 'package:dit_signup/src/services/signup_service.dart';
-import 'package:dit_signup/src/validations/validatios_signup.dart';
+import 'package:dit_signup/src/validations/validation_signup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -22,7 +22,6 @@ class SignUpPage extends StatelessWidget {
       fontFamily: 'SF Regular');
 
   UserModel usuario = new UserModel();
-  var uuid = Uuid(); //Generador de IDs
 
   @override
   Widget build(BuildContext context) {
@@ -160,15 +159,15 @@ class SignUpPage extends StatelessWidget {
   }
 
   submitUser(SignUpValidation valService) {
-    SignUpService crearUsuario = SignUpService();
+    SignUpService servicios = SignUpService();
 
     usuario.firstName = valService.getName.value;
-    usuario.lastName = 'unknown';
+    usuario.lastName = 'Sanchez';
     usuario.email = valService.getEmail.value;
-    usuario.role = 'user';
-    usuario.userId = uuid.v1();
+    usuario.password = valService.getconf.value;
     usuario.locale = "es-es";
+    usuario.role = 'user';
 
-    crearUsuario.createUser(usuario);
+    servicios.createUser(usuario);
   }
 }

@@ -1,4 +1,4 @@
-import 'package:dit_signup/src/validations/validatios_signup.dart';
+import 'package:dit_signup/src/validations/validation_signup.dart';
 import 'package:flutter/material.dart';
 
 import 'src/pages/signup_page.dart';

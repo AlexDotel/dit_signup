@@ -49,21 +49,24 @@ class SignUpValidation with ChangeNotifier {
   }
 
   void changePss(String pss) {
-    (pss.length >= 5)
-        ? _pss = ValidationItem(pss, null)
-        : _pss = ValidationItem(null, "Minimo 5 caracteres");
+    (pss.length >= 8)
+        ?
+        (pss.length <= 16) 
+          ? _pss = ValidationItem(pss, null)
+          : _pss = ValidationItem(null, "Maximo 16 caracteres")
+        : _pss = ValidationItem(null, "Minimo 8 caracteres");
     notifyListeners();
   }
 
   void changeConf(String conf) {
-    if (conf.length >= 5) {
+    if (conf.length >= 8) {
       if (conf == _pss.value) {
         _conf = ValidationItem(conf, null);
       } else {
         _conf = ValidationItem(null, "No coinciden");
       }
     } else {
-      _conf = ValidationItem(null, "Minimo 5 caracteres");
+      _conf = ValidationItem(null, "Minimo 8 caracteres");
     }
 
     notifyListeners();
