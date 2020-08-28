@@ -1,7 +1,9 @@
-import 'package:dit_signup/src/validations/validation_item.dart';
+import 'package:dit_signup/src/models/user_model.dart';
+import 'package:dit_signup/src/services/signup_service.dart';
 import 'package:dit_signup/src/validations/validatios_signup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 class SignUpPage extends StatelessWidget {
   final header = 'Unete a la comunidad Doggies In Town';
@@ -18,6 +20,9 @@ class SignUpPage extends StatelessWidget {
       // fontWeight: FontWeight.bold,
       fontSize: 18,
       fontFamily: 'SF Regular');
+
+  UserModel usuario = new UserModel();
+  var uuid = Uuid(); //Generador de IDs
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +139,9 @@ class SignUpPage extends StatelessWidget {
       child: Column(
         children: [
           RaisedButton(
-            onPressed: valService.isValid ? valService.submitData : null,
+            onPressed: () {
+              valService.isValid ? submitUser(valService) : null;
+            },
             elevation: 0,
             color: Colors.green[300],
             textColor: Colors.white,
@@ -150,5 +157,18 @@ class SignUpPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  submitUser(SignUpValidation valService) {
+    SignUpService crearUsuario = SignUpService();
+
+    usuario.firstName = valService.getName.value;
+    usuario.lastName = 'unknown';
+    usuario.email = valService.getEmail.value;
+    usuario.role = 'user';
+    usuario.userId = uuid.v1();
+    usuario.locale = "es-es";
+
+    crearUsuario.createUser(usuario);
   }
 }

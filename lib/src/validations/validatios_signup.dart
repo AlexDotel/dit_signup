@@ -17,9 +17,12 @@ class SignUpValidation with ChangeNotifier {
   ValidationItem get getconf => _conf;
 
   bool get isValid {
-    if (_name.value != null && _email.value != null && _pss.value != null && _conf.value != null){
+    if (_name.value != null &&
+        _email.value != null &&
+        _pss.value != null &&
+        _conf.value != null) {
       return true;
-    } else{
+    } else {
       return false;
     }
   }
