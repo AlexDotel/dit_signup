@@ -1,9 +1,8 @@
-import 'package:dit_signup/src/models/user_model.dart';
-import 'package:dit_signup/src/services/signup_service.dart';
-import 'package:dit_signup/src/validations/validation_signup.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
+
+import 'package:dit_signup/src/utils/alert_dialog.dart' as utils;
+import 'package:dit_signup/src/validations/validation_signup.dart';
 
 class SignUpPage extends StatelessWidget {
   final header = 'Unete a la comunidad Doggies In Town';
@@ -21,11 +20,9 @@ class SignUpPage extends StatelessWidget {
       fontSize: 18,
       fontFamily: 'SF Regular');
 
-  UserModel usuario = new UserModel();
-
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    // final size = MediaQuery.of(context).size;
     final valService = Provider.of<SignUpValidation>(context);
 
     return Scaffold(
@@ -47,9 +44,12 @@ class SignUpPage extends StatelessWidget {
               child: Column(
                 children: [
                   headers(),
+                  SizedBox(
+                    height: 10,
+                  ),
                   form(valService),
                   Expanded(child: Container()),
-                  buttons(valService),
+                  buttons(valService, context),
                 ],
               ),
             ),
@@ -130,7 +130,7 @@ class SignUpPage extends StatelessWidget {
     );
   }
 
-  buttons(SignUpValidation valService) {
+  Widget buttons(SignUpValidation valService, BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: 60,
@@ -139,8 +139,13 @@ class SignUpPage extends StatelessWidget {
         children: [
           RaisedButton(
             onPressed: () {
-              valService.isValid ? submitUser(valService) : null;
+              if (!valService.isValid) {
+                utils.mostrarAlerta(context, 'Rellene correctamente');
+              } else {
+                valService.submitData(context);
+              }
             },
+            // (!valService.isValid) ? null : valService.submitData(context),
             elevation: 0,
             color: Colors.green[300],
             textColor: Colors.white,
@@ -156,18 +161,5 @@ class SignUpPage extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  submitUser(SignUpValidation valService) {
-    SignUpService servicios = SignUpService();
-
-    usuario.firstName = valService.getName.value;
-    usuario.lastName = 'Sanchez';
-    usuario.email = valService.getEmail.value;
-    usuario.password = valService.getconf.value;
-    usuario.locale = "es-es";
-    usuario.role = 'user';
-
-    servicios.createUser(usuario);
   }
 }

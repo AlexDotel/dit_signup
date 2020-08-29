@@ -1,7 +1,13 @@
-import 'package:dit_signup/src/validations/validation_item.dart';
 import 'package:flutter/material.dart';
 
+import 'package:dit_signup/src/models/user_model.dart';
+import 'package:dit_signup/src/services/signup_service.dart';
+import 'package:dit_signup/src/validations/validation_item.dart';
+import 'package:dit_signup/src/utils/alert_dialog.dart' as utils;
+
 class SignUpValidation with ChangeNotifier {
+  final UserModel usuario = new UserModel();
+
   //En este clase validaremos los valores recibidos en el formulario
   //Utilizando el Provider, que es mas simple que el Inherited BABY XD!
 
@@ -50,10 +56,9 @@ class SignUpValidation with ChangeNotifier {
 
   void changePss(String pss) {
     (pss.length >= 8)
-        ?
-        (pss.length <= 16) 
-          ? _pss = ValidationItem(pss, null)
-          : _pss = ValidationItem(null, "Maximo 16 caracteres")
+        ? (pss.length <= 16)
+            ? _pss = ValidationItem(pss, null)
+            : _pss = ValidationItem(null, "Maximo 16 caracteres")
         : _pss = ValidationItem(null, "Minimo 8 caracteres");
     notifyListeners();
   }
@@ -68,11 +73,27 @@ class SignUpValidation with ChangeNotifier {
     } else {
       _conf = ValidationItem(null, "Minimo 8 caracteres");
     }
-
     notifyListeners();
   }
 
-  void submitData() {
+  Future submitData(BuildContext context) async {
+    SignUpService servicios = SignUpService();
+
+    usuario.firstName = getName.value;
+    usuario.lastName = 'Sanchez';
+    usuario.email = getEmail.value;
+    usuario.password = getconf.value;
+    usuario.locale = "es-es";
+    usuario.role = 'user';
+
+    final Map info = await servicios.createUser(usuario);
+
+    if (info['ok']) {
+      utils.mostrarAlerta(context, info['mensaje']);
+    } else {
+      utils.mostrarAlerta(context, info['error']);
+    }
+
     print('Enhorabuena ${_name.value}, te has registrado correctamente.');
   }
 }
